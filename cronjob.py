@@ -1,5 +1,6 @@
 #!/usr/local/python/bin/python
 # -*- coding: utf-8 -*-
+
 from django.core.management import setup_environ
 import data_system.settings 
 setup_environ(data_system.settings)
