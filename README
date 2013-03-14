@@ -1,0 +1,3 @@
+add cronjob:
+* * * * * /home/lijin/daquan/data_system/single_runner.sh /home/lijin/daquan/data_system/cronjob.py
+
