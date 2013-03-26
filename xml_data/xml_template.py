@@ -3,6 +3,49 @@
 import json
 import MySQLdb
 
+class Templater:
+    
+    def __init__(self,str_template):
+        self._str_template = str_template
+        self._field_key = {}
+        self._field_procee = {}
+    
+    def __del__(self):
+        pass
+
+    def template_to_sql():
+        json_template = json.loads(self._str_template)
+        tables_sql = {}
+        
+        main_table_name = json_template.keys()[0].encode('utf-8')
+        main_table_fields = []
+        sub_tables = {}
+        for item in json_template[table_name]:
+            if not isinstance(item[1],dict):
+                field_item = item
+                field_name = field_item[0].encode('utf-8')
+                field_type = field_item[1].encode('utf-8')
+                field_sql = gen_field_sql(field_name,field_type)
+                main_table_fields.append(field_sql)
+            else:
+                sub_tables[item[0]] = item[1]
+        table_sql = "create table "+main_table_name+"("+",".join(main_table_fields)+");"
+        tables_sql[main_table_name] = table_sql
+    
+        for sub_table in sub_tables.items():
+            sub_table_name = sub_table[0].encode('utf-8')
+            sub_fields_sql = []
+            for field_item in sub_table[1].items():
+                field_item = item
+                field_name = field_item[0].encode('utf-8')
+                field_type = field_item[1].encode('utf-8')
+                field_sql = gen_field_sql(field_name,field_type)
+                sub_fields_sql.append(field_sql)
+            table_sql = "create table "+sub_table_name+"("+",".join(sub_fields_sql)+");"
+            tables_sql[sub_table_name] = table_sql
+        
+        return tables_sql
+
 def gen_field_sql(field_name,field_type):
     sql = ''
     if field_type == 'auto':
@@ -38,7 +81,6 @@ def template_to_sql(json_template):
         table_sql = "create table "+table_name+"("+",".join(fields_sql)+");"
         tables_sql[table_name] = table_sql
     return tables_sql 
-            
 
 def create_mysql_table(mysql_connect,tables_sql):
     mysql_connect.query("show tables")
@@ -51,12 +93,10 @@ def create_mysql_table(mysql_connect,tables_sql):
         if table[0] not in exist_tables:
             mysql_connect.query(table[1])
     
-
 def init_template(mysql_connect,str_template):
     json_object = json.loads(str_template)
     tables_sql = template_to_sql(json_object)
     create_mysql_table(mysql_connect,tables_sql)
-    
 
 if __name__ == "__main__":
     mysql_connect = MySQLdb.connect(user='root',passwd='sd-9898w',db='showtest')
