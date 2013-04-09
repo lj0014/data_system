@@ -8,3 +8,4 @@ if [ "$process_info" != "" ];then
     exit 0
 fi
 $PROGRAM_NAME
+
